@@ -2,12 +2,10 @@ package io.github.oliviercailloux.avignon_to_vcard;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-import org.jsoup.Jsoup;
-import org.jsoup.helper.W3CDom;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,25 +14,25 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-public class ReadHtml {
-	private static final String INPUT_URL = "http://www.avignonleoff.com/programme/2017/mangeront-ils-s18777/";
+import com.google.common.collect.Iterables;
 
+import io.github.oliviercailloux.avignon_to_vcard.utils.DomUtils;
+
+public class ReadHtml {
 	@SuppressWarnings("unused")
 	private static final Logger LOGGER = LoggerFactory.getLogger(ReadHtml.class);
 
 	private Document doc;
 
-	public void getDocFromResource() throws IOException {
-		try (InputStream htmlStream = this.getClass().getResourceAsStream("out.html")) {
-			org.jsoup.nodes.Document jsoupDoc = Jsoup.parse(htmlStream, StandardCharsets.UTF_8.name(), INPUT_URL);
-			LOGGER.debug("Getting doc.");
-			doc = new W3CDom().fromJsoup(jsoupDoc);
-		}
+	private final DomUtils domUtils;
+
+	public ReadHtml() {
+		domUtils = new DomUtils();
 	}
 
 	@Test
 	public void testReadData() throws Exception {
-		getDocFromResource();
+		doc = new TestUtils().getDocFromResource();
 		Element docE = doc.getDocumentElement();
 		assertEquals("html", docE.getTagName());
 		final NodeList h1s = doc.getElementsByTagName("h1");
@@ -51,28 +49,13 @@ public class ReadHtml {
 		assertEquals(2, h2spanChilds.getLength());
 		final Node timeNode = h2spanChilds.item(1);
 		assertEquals(" À 15h50", timeNode.getNodeValue());
-		getTextNodes(doc.getDocumentElement());
-		textNodesUnder(node){
-			  var all = [];
-			  for (node=node.firstChild;node;node=node.nextSibling){
-			    if (node.nodeType==3) {
-					all.push(node);
-				} else {
-					all = all.concat(textNodesUnder(node));
-				}
-			  }
-			  return all;
-			}
-		docE.cr
-		LOGGER.info("Text content:\n", docE.getTextContent());
-		assertEquals("Durée : 1h15",
-				h2.getParentNode().getNextSibling().getFirstChild().getFirstChild().getNodeValue());
-
-	}
-
-	private List<Node> getTextNodes(Node node) {
-		final Element docE = doc.getDocumentElement();
-
+		final Pattern pattern = Pattern.compile("Durée : (?<length>[\\dh]+)");
+		final List<Node> textNodes = domUtils.getTextNodes(doc.getDocumentElement());
+		final List<Matcher> matchers = domUtils.searchText(textNodes, pattern);
+		assertEquals(1, matchers.size());
+		final Matcher matcher = Iterables.getOnlyElement(matchers);
+		final String readLength = matcher.group("length");
+		assertEquals("1h15", readLength);
 	}
 
 }
