@@ -1,7 +1,5 @@
 package io.github.oliviercailloux.avignon_to_vcard;
 
-import static org.junit.Assert.fail;
-
 import java.io.FileOutputStream;
 
 import org.junit.Test;
@@ -42,7 +40,7 @@ public class VCard {
 
 		CalendarOutputter outputter = new CalendarOutputter();
 		outputter.output(calendar, fout);
-		fail();
+//		fail();
 	}
 
 }

@@ -29,7 +29,7 @@ public class DomSearchTest {
 		assertEquals(1, matchers.size());
 		final Matcher matcher = Iterables.getOnlyElement(matchers);
 		final String readLength = matcher.group("length");
-		assertEquals("1h15", readLength);
+		assertEquals("1h", readLength);
 	}
 
 }

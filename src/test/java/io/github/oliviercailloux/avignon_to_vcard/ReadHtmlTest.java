@@ -18,15 +18,15 @@ import com.google.common.collect.Iterables;
 
 import io.github.oliviercailloux.avignon_to_vcard.utils.DomUtils;
 
-public class TestReadHtml {
+public class ReadHtmlTest {
 	@SuppressWarnings("unused")
-	private static final Logger LOGGER = LoggerFactory.getLogger(TestReadHtml.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(ReadHtmlTest.class);
 
 	private Document doc;
 
 	private final DomUtils domUtils;
 
-	public TestReadHtml() {
+	public ReadHtmlTest() {
 		domUtils = new DomUtils();
 	}
 
