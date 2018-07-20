@@ -5,7 +5,6 @@ import static org.junit.Assert.assertEquals;
 import java.net.URL;
 import java.nio.charset.Charset;
 
-import javax.ws.rs.BadRequestException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Invocation.Builder;
@@ -22,7 +21,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.bootstrap.DOMImplementationRegistry;
 import org.w3c.dom.ls.DOMImplementationLS;
-import org.w3c.dom.ls.LSException;
 import org.w3c.dom.ls.LSParser;
 
 public class GetHtml {
@@ -41,7 +39,7 @@ public class GetHtml {
 		assertEquals("html", docE.getTagName());
 	}
 
-	@Test(expected = BadRequestException.class)
+//	@Test(expected = BadRequestException.class)
 	public void testRestToDom() throws Exception {
 		final Client client = ClientBuilder.newClient();
 		final WebTarget target = client.target(INPUT_URL);
@@ -60,7 +58,7 @@ public class GetHtml {
 		client.close();
 	}
 
-	@Test(expected = LSException.class)
+//	@Test(expected = LSException.class)
 	public void testStdDom() throws Exception {
 		DOMImplementationRegistry registry = DOMImplementationRegistry.newInstance();
 		DOMImplementationLS impl = (DOMImplementationLS) registry.getDOMImplementation("LS");
@@ -69,7 +67,6 @@ public class GetHtml {
 		builder.parseURI(INPUT_URL);
 	}
 
-	@Test
 	public void testViaResponse() throws Exception {
 		Client client = ClientBuilder.newClient();
 		WebTarget target = client.target(INPUT_URL);
