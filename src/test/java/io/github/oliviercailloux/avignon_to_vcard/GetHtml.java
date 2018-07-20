@@ -8,6 +8,7 @@ import java.nio.charset.Charset;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Invocation.Builder;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -26,7 +27,7 @@ import org.w3c.dom.ls.LSParser;
 
 public class GetHtml {
 
-	private static final String INPUT_URL = "http://www.avignonleoff.com/programme/2017/mangeront-ils-s18777/";
+	private static final String INPUT_URL = "http://www.avignonleoff.com/programme/2018/je-t-aime-papa-mais-merci-d-etre-mort-s23286/";
 
 	@SuppressWarnings("unused")
 	private static final Logger LOGGER = LoggerFactory.getLogger(GetHtml.class);
@@ -42,10 +43,20 @@ public class GetHtml {
 
 	@Test(expected = BadRequestException.class)
 	public void testRestToDom() throws Exception {
-		Client client = ClientBuilder.newClient();
-		WebTarget target = client.target(INPUT_URL);
+		final Client client = ClientBuilder.newClient();
+		final WebTarget target = client.target(INPUT_URL);
+		final Builder req = target.request();
+		LOGGER.info("Obtaining response.");
+		final Response response = req.get();
+		LOGGER.info("MT: {}.", response.getMediaType());
+		LOGGER.info("Obtaining entity.");
+		final Object entity = response.getEntity();
+		LOGGER.info("Entity: {}.", entity);
 		LOGGER.info("Parsing response.");
-		target.request(MediaType.TEXT_HTML).get(Document.class);
+		req.get(Document.class);
+		LOGGER.info("Parsing response html.");
+		final Builder reqHtml = target.request(MediaType.TEXT_HTML);
+		reqHtml.get(Document.class);
 		client.close();
 	}
 
