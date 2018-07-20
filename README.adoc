@@ -1,0 +1,6 @@
+= Avignon to vcard
+
+image:https://travis-ci.org/oliviercailloux/avignon-to-vcard.svg?branch=master["Build Status", link="https://travis-ci.org/oliviercailloux/avignon-to-vcard"]
+
+A project to ease use of the Avignon off program.
+
