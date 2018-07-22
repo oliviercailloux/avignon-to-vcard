@@ -1,4 +1,4 @@
-package io.github.oliviercailloux.avignon_to_vcard;
+package io.github.oliviercailloux.avignon_to_vcard.model;
 
 import static java.util.Objects.requireNonNull;
 

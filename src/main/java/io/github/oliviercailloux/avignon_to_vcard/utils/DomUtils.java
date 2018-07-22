@@ -57,7 +57,20 @@ public class DomUtils {
 		return getSubNodes(node, Node.TEXT_NODE);
 	}
 
-	public String save(Node node) {
+	public List<Matcher> searchText(List<Node> textNodes, Pattern pattern) {
+		final List<Matcher> matchers = Lists.newArrayList();
+		for (Node node : textNodes) {
+			final String text = node.getTextContent();
+			LOGGER.debug("Node text: {}.", text);
+			final Matcher matcher = pattern.matcher(text);
+			if (matcher.matches()) {
+				matchers.add(matcher);
+			}
+		}
+		return matchers;
+	}
+
+	public String serialize(Node node) {
 		requireNonNull(node);
 		DOMImplementationRegistry registry;
 		try {
@@ -74,18 +87,6 @@ public class DomUtils {
 		DOMImplementationLS impl = (DOMImplementationLS) registry.getDOMImplementation("LS");
 		LSSerializer ser = impl.createLSSerializer();
 		return ser.writeToString(node);
-	}
-
-	public List<Matcher> searchText(List<Node> textNodes, Pattern pattern) {
-		final List<Matcher> matchers = Lists.newArrayList();
-		for (Node node : textNodes) {
-			final String text = node.getTextContent();
-			final Matcher matcher = pattern.matcher(text);
-			if (matcher.matches()) {
-				matchers.add(matcher);
-			}
-		}
-		return matchers;
 	}
 
 }
