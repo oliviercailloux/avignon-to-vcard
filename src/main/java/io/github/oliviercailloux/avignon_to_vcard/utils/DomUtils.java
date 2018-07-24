@@ -2,12 +2,19 @@ package io.github.oliviercailloux.avignon_to_vcard.utils;
 
 import static java.util.Objects.requireNonNull;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.ws.rs.WebApplicationException;
+
+import org.jsoup.Jsoup;
+import org.jsoup.helper.W3CDom;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -21,6 +28,27 @@ public class DomUtils {
 
 	@SuppressWarnings("unused")
 	private static final Logger LOGGER = LoggerFactory.getLogger(DomUtils.class);
+
+	public static Document getDoc(URL showUrl) {
+		org.jsoup.nodes.Document jsoupDoc;
+		try {
+			LOGGER.info("Fetching {}.", showUrl);
+			jsoupDoc = Jsoup.connect(showUrl.toString()).timeout(5 * 1000).get();
+		} catch (Exception e) {
+			throw new WebApplicationException(e);
+		}
+		LOGGER.debug("Getting doc.");
+		final Document doc = new W3CDom().fromJsoup(jsoupDoc);
+		return doc;
+	}
+
+	public static URL getExample() {
+		try {
+			return new URL("http://www.example.com");
+		} catch (MalformedURLException e) {
+			throw new IllegalStateException(e);
+		}
+	}
 
 	public List<Node> getNodesByUrl(List<Node> nodes, Pattern pattern) {
 		final List<Node> matching = Lists.newArrayList();

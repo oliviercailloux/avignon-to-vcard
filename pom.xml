@@ -36,9 +36,14 @@
 			<version>21.0</version>
 		</dependency>
 		<dependency>
+			<groupId>net.sf.biweekly</groupId>
+			<artifactId>biweekly</artifactId>
+			<version>0.6.2</version>
+		</dependency>
+		<dependency>
 			<groupId>org.mnode.ical4j</groupId>
-			<artifactId>ical4j-vcard</artifactId>
-			<version>1.0.0</version>
+			<artifactId>ical4j</artifactId>
+			<version>3.0.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jsoup</groupId>

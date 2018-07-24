@@ -12,7 +12,7 @@ public class Base {
 	@SuppressWarnings("unused")
 	private static final Logger LOGGER = LoggerFactory.getLogger(Base.class);
 
-	public URL getBaseUrl() {
+	public static URL getBaseUrl() {
 		try {
 			return new URL(BASE_URL);
 		} catch (MalformedURLException e) {
@@ -20,7 +20,7 @@ public class Base {
 		}
 	}
 
-	public URL getShowUrl(String relativeShowUrl) {
+	public static URL getShowUrl(String relativeShowUrl) {
 		try {
 			return new URL(new URL(getBaseUrl(), "programme/2018/"), relativeShowUrl);
 		} catch (MalformedURLException e) {

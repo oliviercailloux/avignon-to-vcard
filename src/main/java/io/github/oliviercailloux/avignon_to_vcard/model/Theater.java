@@ -5,11 +5,14 @@ import static java.util.Objects.requireNonNull;
 import java.net.URL;
 
 public class Theater {
-	public static Theater from(String name, String address, URL theaterUrl, URL mapUrl) {
-		return new Theater(name, address, theaterUrl, mapUrl);
+	public static Theater from(String name, String addressFirstLine, String addressSecondLine, URL theaterUrl,
+			URL mapUrl) {
+		return new Theater(name, addressFirstLine, addressSecondLine, theaterUrl, mapUrl);
 	}
 
-	private String address;
+	private String addressFirstLine;
+
+	private String addressSecondLine;
 
 	private URL mapUrl;
 
@@ -17,15 +20,20 @@ public class Theater {
 
 	private URL theaterUrl;
 
-	private Theater(String name, String address, URL theaterUrl, URL mapUrl) {
+	private Theater(String name, String addressFirstLine, String addressSecondLine, URL theaterUrl, URL mapUrl) {
 		this.name = requireNonNull(name);
-		this.address = requireNonNull(address);
+		this.addressFirstLine = requireNonNull(addressFirstLine);
+		this.addressSecondLine = requireNonNull(addressSecondLine);
 		this.theaterUrl = requireNonNull(theaterUrl);
 		this.mapUrl = requireNonNull(mapUrl);
 	}
 
 	public String getAddress() {
-		return address;
+		return addressFirstLine + "\n" + addressSecondLine;
+	}
+
+	public String getAddressFirstLine() {
+		return addressFirstLine;
 	}
 
 	public URL getMapUrl() {

@@ -53,6 +53,10 @@ public class Show {
 		return title;
 	}
 
+	public URL getUrl() {
+		return url;
+	}
+
 	public JsonObject toJson() {
 		final JsonArrayBuilder slotsJsonBuilder = Json.createArrayBuilder();
 		for (Range<Instant> slot : slots) {

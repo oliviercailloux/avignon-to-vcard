@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 
 import java.net.URL;
 import java.time.Instant;
-import java.time.ZonedDateTime;
 
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -14,6 +13,7 @@ import org.w3c.dom.Element;
 
 import com.google.common.collect.Range;
 
+import io.github.oliviercailloux.avignon_to_vcard.model.Base;
 import io.github.oliviercailloux.avignon_to_vcard.model.Show;
 import io.github.oliviercailloux.avignon_to_vcard.model.Theater;
 
@@ -27,12 +27,10 @@ public class ReadHtmlTest {
 	public void readShow() throws Exception {
 		final TestUtils testUtils = new TestUtils();
 		doc = testUtils.getDocFromResource();
-		final ShowReader reader = new ShowReader(testUtils.getBaseUrl());
+		final ShowReader reader = new ShowReader(Base.getBaseUrl());
 		final Show show = reader.readShow(doc, new URL("http://example.com"));
 		assertEquals("Je t'aime papa mais...Merci d'être mort !", show.getTitle());
-		final Instant firstStart = ZonedDateTime.parse("2018-07-06T10:00:00+02:00[Europe/Paris]").toInstant();
-		final Instant firstEnd = ZonedDateTime.parse("2018-07-06T11:00:00+02:00[Europe/Paris]").toInstant();
-		final Range<Instant> firstSlot = Range.closed(firstStart, firstEnd);
+		final Range<Instant> firstSlot = TestUtils.getSlot();
 		assertEquals(firstSlot, show.getSlots().iterator().next());
 		expected(show.getTheater());
 	}
@@ -41,7 +39,7 @@ public class ReadHtmlTest {
 	public void readTheater() throws Exception {
 		final TestUtils testUtils = new TestUtils();
 		doc = testUtils.getDocFromResource();
-		final ShowReader reader = new ShowReader(testUtils.getBaseUrl());
+		final ShowReader reader = new ShowReader(Base.getBaseUrl());
 		final Theater theater = reader.readTheater(doc);
 		expected(theater);
 

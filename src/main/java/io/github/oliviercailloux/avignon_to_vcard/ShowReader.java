@@ -143,7 +143,7 @@ public class ShowReader {
 		final Node theaterNameTextNode = theaterContentNode.getChildNodes().item(1);
 		final String rawName = domUtils.serialize(theaterNameTextNode);
 		final String name = rawName.trim();
-		return Theater.from(name, address + "\n" + address2, theaterUrl, mapUrl);
+		return Theater.from(name, address, address2, theaterUrl, mapUrl);
 	}
 
 }
