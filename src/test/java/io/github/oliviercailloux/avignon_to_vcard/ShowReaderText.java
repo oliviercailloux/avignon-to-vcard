@@ -16,10 +16,11 @@ import com.google.common.collect.Range;
 import io.github.oliviercailloux.avignon_to_vcard.model.Base;
 import io.github.oliviercailloux.avignon_to_vcard.model.Show;
 import io.github.oliviercailloux.avignon_to_vcard.model.Theater;
+import io.github.oliviercailloux.avignon_to_vcard.utils.DomUtils;
 
-public class ReadHtmlTest {
+public class ShowReaderText {
 	@SuppressWarnings("unused")
-	private static final Logger LOGGER = LoggerFactory.getLogger(ReadHtmlTest.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(ShowReaderText.class);
 
 	private Document doc;
 
@@ -46,10 +47,37 @@ public class ReadHtmlTest {
 	}
 
 	@Test
+	public void testBoby() throws Exception {
+		final ShowReader reader = new ShowReader(Base.getBaseUrl());
+		final URL showURL = DomUtils
+				.getURL("http://www.avignonleoff.com/programme/2018/from-two-to-boby-lapointe-s22164/");
+		final Show show = reader.readShow(DomUtils.getDoc(showURL), showURL);
+		assertEquals("From two to Boby Lapointe", show.getTitle());
+	}
+
+	@Test
+	public void testGreen() throws Exception {
+		final ShowReader reader = new ShowReader(Base.getBaseUrl());
+		final URL showURL = DomUtils
+				.getURL("http://www.avignonleoff.com/programme/2018/visites-a-mister-green-s23504/");
+		final Show show = reader.readShow(DomUtils.getDoc(showURL), showURL);
+		assertEquals("Visites à Mister Green", show.getTitle());
+	}
+
+	@Test
 	public void testReadData() throws Exception {
 		doc = new TestUtils().getDocFromResource();
 		Element docE = doc.getDocumentElement();
 		assertEquals("html", docE.getTagName());
+	}
+
+	@Test
+	public void testSimone() throws Exception {
+		final ShowReader reader = new ShowReader(Base.getBaseUrl());
+		final URL showURL = DomUtils.getURL(
+				"http://www.avignonleoff.com/programme/2018/simone-de-beauvoir-on-ne-nait-pas-femme-on-le-devient-s23029/");
+		final Show show = reader.readShow(DomUtils.getDoc(showURL), showURL);
+		assertEquals("Simone", show.getTitle());
 	}
 
 	private void expected(Theater theater) {

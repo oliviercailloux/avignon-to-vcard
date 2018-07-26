@@ -32,10 +32,10 @@ public class ICalWriterTest {
 
 	@Test
 	public void testWriter() throws Exception {
-		final Theater theater = Theater.from("theater", "the-addr", "Avignon", DomUtils.getExample(),
-				DomUtils.getExample());
+		final Theater theater = Theater.from("theater", "the-addr", "Avignon", DomUtils.getExampleUrl(),
+				DomUtils.getExampleUrl());
 		final Range<Instant> slot = TestUtils.getSlot();
-		final Show show = Show.from("show", ImmutableList.of(slot), DomUtils.getExample(), theater);
+		final Show show = Show.from("show", ImmutableList.of(slot), DomUtils.getExampleUrl(), theater);
 		final IcalWriter writer = new IcalWriter();
 //		writer.write(show, slot, new FileOutputStream("out.ics"));
 		final StringWriter dest = new StringWriter();

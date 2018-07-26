@@ -7,6 +7,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import javax.ws.rs.WebApplicationException;
 
@@ -15,6 +16,7 @@ import org.jsoup.helper.W3CDom;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -42,17 +44,33 @@ public class DomUtils {
 		return doc;
 	}
 
-	public static URL getExample() {
+	public static URL getExampleUrl() {
+		return getURL("http://www.example.com");
+	}
+
+	public static URL getURL(String urlStr) {
 		try {
-			return new URL("http://www.example.com");
+			return new URL(urlStr);
 		} catch (MalformedURLException e) {
 			throw new IllegalStateException(e);
 		}
 	}
 
-	public List<Node> getNodesByUrl(List<Node> nodes, Pattern pattern) {
+	public static URL getURL(URL context, String spec) {
+		try {
+			return new URL(context, spec);
+		} catch (MalformedURLException e) {
+			throw new IllegalStateException(e);
+		}
+	}
+
+	public List<Element> getElements(Node node) {
+		return getSubNodes(node, Node.ELEMENT_NODE).stream().map(n -> (Element) n).collect(Collectors.toList());
+	}
+
+	public List<Node> getNodesByUrl(List<Element> nodes, Pattern pattern) {
 		final List<Node> matching = Lists.newArrayList();
-		for (Node node : nodes) {
+		for (Element node : nodes) {
 			final NamedNodeMap attributes = node.getAttributes();
 			final Node hrefNode = attributes.getNamedItem("href");
 			if (hrefNode == null) {

@@ -13,13 +13,16 @@ import java.time.Month;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.MoreCollectors;
@@ -52,15 +55,19 @@ public class ShowReader {
 		final Node h2span = h2childs.item(0);
 		final NodeList h2spanChilds = h2span.getChildNodes();
 		checkArgument(h2spanChilds.getLength() == 2);
-		final Node timeNode = h2spanChilds.item(1);
-		final String timeFullStr = timeNode.getNodeValue();
-		checkArgument(timeFullStr.startsWith(" À "));
-		final String timeStr = timeFullStr.substring(3);
-//		final DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT)
-//				.withLocale(Locale.FRENCH).withZone(ZoneId.of("Europe/Paris"));
+		final Node timesNode = h2spanChilds.item(1);
+		final String timesFullStr = timesNode.getNodeValue();
+		checkArgument(timesFullStr.startsWith(" À "));
+		final String timesStr = timesFullStr.substring(3);
+		final String[] timesStrs = timesStr.split(" / ");
 		final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("H'h'[mm]");
-		final LocalTime startTime = formatter.parse(timeStr, LocalTime::from);
 		final List<Node> textNodes = domUtils.getTextNodes(source.getDocumentElement());
+		List<LocalTime> startTimes = Lists.newArrayList();
+		for (String timeStr : timesStrs) {
+			final LocalTime startTime = formatter.parse(timeStr, LocalTime::from);
+			startTimes.add(startTime);
+		}
+		checkArgument(startTimes.size() >= 1);
 		final int firstDay;
 		final int lastDay;
 		{
@@ -75,16 +82,20 @@ public class ShowReader {
 		final List<Integer> relâcheDays;
 		{
 			final Pattern pattern = Pattern.compile("Relâches.*: ");
-			final Node relâcheNode = textNodes.stream().filter((n) -> pattern.matcher(n.getTextContent()).matches())
-					.collect(MoreCollectors.onlyElement());
-			final String relâcheValue = relâcheNode.getParentNode().getNextSibling().getTextContent();
-			checkArgument(relâcheValue.endsWith(" juillet"));
-			final String relâcheDaysTxt = relâcheValue.substring(0, relâcheValue.length() - 8);
-			final String[] split = relâcheDaysTxt.split(", ");
-			relâcheDays = Lists.newArrayList();
-			for (String relâcheDayTxt : split) {
-				final int relâcheDay = Integer.parseInt(relâcheDayTxt);
-				relâcheDays.add(relâcheDay);
+			final Optional<Node> relâcheNodeOpt = textNodes.stream()
+					.filter((n) -> pattern.matcher(n.getTextContent()).matches()).collect(MoreCollectors.toOptional());
+			if (relâcheNodeOpt.isPresent()) {
+				relâcheDays = Lists.newArrayList();
+				final String relâcheValue = relâcheNodeOpt.get().getParentNode().getNextSibling().getTextContent();
+				checkArgument(relâcheValue.endsWith(" juillet"));
+				final String relâcheDaysTxt = relâcheValue.substring(0, relâcheValue.length() - 8);
+				final String[] split = relâcheDaysTxt.split(", ");
+				for (String relâcheDayTxt : split) {
+					final int relâcheDay = Integer.parseInt(relâcheDayTxt);
+					relâcheDays.add(relâcheDay);
+				}
+			} else {
+				relâcheDays = ImmutableList.of();
 			}
 		}
 		final Duration duration;
@@ -114,7 +125,7 @@ public class ShowReader {
 
 	public Theater readTheater(Document source) {
 		final Pattern patternMap = Pattern.compile("https://maps.google.fr/.*");
-		final List<Node> nodes = domUtils.getSubNodes(source.getDocumentElement(), Node.ELEMENT_NODE);
+		final List<Element> nodes = domUtils.getElements(source.getDocumentElement());
 		final List<Node> matching = domUtils.getNodesByUrl(nodes, patternMap);
 		final Node mapNode = Iterables.getOnlyElement(matching);
 		final String mapUrlTxt = mapNode.getAttributes().getNamedItem("href").getNodeValue();
